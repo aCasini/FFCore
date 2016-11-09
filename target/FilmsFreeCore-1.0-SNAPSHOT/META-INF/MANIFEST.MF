@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Implementation-Title: FilmsFreeCore
+Implementation-Version: 1.0-SNAPSHOT
+Archiver-Version: Plexus Archiver
+Built-By: kasoale
+Implementation-Vendor-Id: it.kasoale
+Spring-Boot-Version: 1.4.1.RELEASE
+Implementation-Vendor: Pivotal Software, Inc.
+Main-Class: org.springframework.boot.loader.JarLauncher
+Start-Class: it.kasoale.Application
+Spring-Boot-Classes: BOOT-INF/classes/
+Spring-Boot-Lib: BOOT-INF/lib/
+Created-By: Apache Maven 3.3.9
+Build-Jdk: 1.8.0_91
+Implementation-URL: http://projects.spring.io/spring-boot/FilmsFreeCor
+ e/
+
