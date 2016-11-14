@@ -13,6 +13,7 @@ public class Film {
     private String filmUrl;
     private String streamingUrl;
 
+
     public Film(){
         super();
     }
@@ -23,6 +24,7 @@ public class Film {
         this.filmUrl = filmUrl;
         this.streamingUrl = streamingUrl;
     }
+
 
     public String getFilmName() {
         return filmName;
@@ -55,6 +57,8 @@ public class Film {
     public void setStreamingUrl(String streamingUrl) {
         this.streamingUrl = streamingUrl;
     }
+
+
 
     public String toString(){
         return "Film Name: "+ filmName + "\n"
