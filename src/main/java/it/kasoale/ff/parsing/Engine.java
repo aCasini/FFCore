@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 /**
  * Created by kasoale on 01/11/2016.
  */
-public class Engine {
+public class Engine{
 
     private static Logger logger = LoggerFactory.getLogger(Engine.class);
 

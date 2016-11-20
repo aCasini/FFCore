@@ -1,6 +1,9 @@
 package it.kasoale.ff.parsing;
 
 import it.kasoale.beans.Serie;
+import org.jsoup.HttpStatusException;
+
+import java.io.IOException;
 
 /**
  * Created by kasoale on 13/11/2016.

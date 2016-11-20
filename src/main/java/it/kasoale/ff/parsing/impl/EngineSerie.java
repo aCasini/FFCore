@@ -4,8 +4,10 @@ import it.kasoale.beans.Episode;
 import it.kasoale.beans.Season;
 import it.kasoale.beans.SerieTV;
 import it.kasoale.ff.parsing.IEngine;
+import it.kasoale.ff.parsing.js.JSInvocable;
 import it.kasoale.utils.ParsingProperties;
 import org.apache.log4j.Logger;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,11 +17,13 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by kasoale on 13/11/2016.
  */
-public class EngineSerie implements IEngine<SerieTV> {
+public class EngineSerie extends AbstractEngine<SerieTV> {
 
     private static Logger logger = Logger.getLogger(EngineSerie.class);
 
@@ -59,11 +63,11 @@ public class EngineSerie implements IEngine<SerieTV> {
                         && element.attr("class").equals("box-link-serie")
                         && !element.attr("href").contains("dmca")){
                     serieTV_URL = element.attr("href");
-                    logger.info("Serie TV URL: "+serieTV_URL);
+                    //logger.info("Serie TV URL: "+serieTV_URL);
                     Elements locandinaElements = element.select("img");
                     for (Element locandina : locandinaElements) {
                         String locandinaURL = locandina.attr("src");
-                        logger.info("Locandina URL: "+locandinaURL);
+                        //logger.info("Locandina URL: "+locandinaURL);
                         serieTV.setImageURL(locandinaURL);
                     }
                 }
@@ -102,7 +106,7 @@ public class EngineSerie implements IEngine<SerieTV> {
 
             }
 
-            logger.info("SERIE TV: \n"+serieTV.toString());
+            //logger.info("SERIE TV: \n"+serieTV.toString());
 
 
             //stretchMe
@@ -112,7 +116,7 @@ public class EngineSerie implements IEngine<SerieTV> {
 
                 if(elSeason.attr("class").equals("stretchMe parallax")
                         && elSeason.attr("data-stretch") != null) {
-                    logger.info("Season Image: "+elSeason.attr("data-stretch"));
+                    //logger.info("Season Image: "+elSeason.attr("data-stretch"));
                     seasonImageURL = elSeason.attr("data-stretch");
                 }
             }
@@ -127,20 +131,28 @@ public class EngineSerie implements IEngine<SerieTV> {
                 season.setImageSeason(seasonImageURL);
                 season.setSeasonID(elSeason.html());
                 seasons.add(season);
+            }
 
-                logger.info(elSeason.html());
+            for (Season season : seasons) {
+                Elements seasonsEleName = docSeries.select("h1");
+                for (Element elSeason : seasonsEleName) {
+                    if(elSeason.attr("class").equals("title-bg-wrap")){
+                        season.setName(elSeason.html());
+                    }
+                }
             }
 
 
 
+            ArrayList<String> titleList = new ArrayList<>();
+            ArrayList<String> descriptionList = new ArrayList<>();
+            ArrayList<String> episodeURLEncodedlist = new ArrayList<>();
+            ArrayList<String> episodeIDList = new ArrayList<>();
+            ArrayList<String> imageUrlList = new ArrayList<>();
 
             //recupero le informazioni relative gli episodi della stagione
             for (Season season: seasons) {
-                ArrayList<String> titleList = new ArrayList<>();
-                ArrayList<String> descriptionList = new ArrayList<>();
-                ArrayList<String> episodeURLEncodedlist = new ArrayList<>();
-                ArrayList<String> episodeIDList = new ArrayList<>();
-                ArrayList<String> imageUrlList = new ArrayList<>();
+
 
                 String seasonNumber = season.getSeasonID().split("Stagione ")[1].trim();
                 logger.info("*** Season - " + seasonNumber + " - ***");
@@ -153,10 +165,23 @@ public class EngineSerie implements IEngine<SerieTV> {
                         && elementEpisode.attr("meta-stag").equals(seasonNumber)) {
                         String episodeURLEncoded = elementEpisode.attr("meta-embed");
                         String episodeNumber = elementEpisode.attr("meta-ep");
-                        logger.info("Episode " + episodeNumber + " -- " + episodeURLEncoded);
+                        //logger.info("Episode " + episodeNumber + " -- " + episodeURLEncoded);
 
                         episodeIDList.add("S"+seasonNumber+"x"+episodeNumber);
-                        imageUrlList.add(episodeURLEncoded);
+
+                        //***** decode the URL
+
+                        Document tempDoc = Jsoup.connect(episodeURLEncoded).userAgent(USER_AGENT).referrer(REFERER_URL).get();
+                        int key = retrievalKey(tempDoc.html());
+                        String encodedUrl = retrievalEncodedUrl(tempDoc.html());
+
+                        if(encodedUrl != null){
+                            episodeURLEncodedlist.add(JSInvocable.decriptURLVideo(encodedUrl, key));
+                        }
+                        //*****
+
+                        //episodeURLEncodedlist.add(episodeURLEncoded);
+
 
                         Elements imgEpisodeElements = docSeries.select("img");
                         episodesLoop:
@@ -164,16 +189,16 @@ public class EngineSerie implements IEngine<SerieTV> {
                             if (elementImg.attr("meta-src") != null
                                     && elementImg.attr("meta-src").contains("-" + seasonNumber + "x" + episodeNumber + "-")) {
                                 String imageElemntUrl = elementImg.attr("meta-src");
-                                logger.info("img episode: " + imageElemntUrl);
-                                episodeURLEncodedlist.add(imageElemntUrl);
+                                //logger.info("img episode: " + imageElemntUrl);
+                                imageUrlList.add(imageElemntUrl);
                                 break episodesLoop;
                             }
                             if (seasonNumber.equals("5")) {
                                 if (elementImg.attr("data-original") != null
                                         && elementImg.attr("data-original").contains("-" + seasonNumber + "x" + episodeNumber + "-")) {
                                     String imageElemntUrl = elementImg.attr("data-original");
-                                    logger.info("img episode: " + imageElemntUrl);
-                                    episodeURLEncodedlist.add(imageElemntUrl);
+                                    //logger.info("img episode: " + imageElemntUrl);
+                                    imageUrlList.add(imageElemntUrl);
                                     break episodesLoop;
                                 }
                             }
@@ -186,7 +211,7 @@ public class EngineSerie implements IEngine<SerieTV> {
                         String episodeTitle = elementEpisode.html();
 
                         if(!titleList.contains(episodeTitle)){
-                            logger.info("Title: "+episodeTitle);
+                            //logger.info("Title: "+episodeTitle);
                             titleList.add(episodeTitle);
                         }
                     }
@@ -208,54 +233,87 @@ public class EngineSerie implements IEngine<SerieTV> {
                     }
                 }
 
-                int index = 0;
-                logger.info("Size episodeIDList --> "+episodeIDList.size());
-                logger.info("Size titleList --> "+titleList.size());
-                logger.info("Size descriptionList --> "+descriptionList.size());
-                logger.info("Size imageUrlList --> "+imageUrlList.size());
-                logger.info("Size episodeURLEncodedlist --> "+ episodeURLEncodedlist.size());
+            }
 
-                logger.info("Size episodesList --> "+episodes.size());
-                for (int i = 0; i < episodeIDList.size() ; i++) {
+            int index = 0;
+            logger.info("Size episodeIDList --> "+episodeIDList.size());
+            logger.info("Size titleList --> "+titleList.size());
+            logger.info("Size descriptionList --> "+descriptionList.size());
+            logger.info("Size imageUrlList --> "+imageUrlList.size());
+            logger.info("Size episodeURLEncodedlist --> "+ episodeURLEncodedlist.size());
+            for (Season season : seasons) {
+                String seasonNumber = "S"+season.getSeasonID().split("Stagione ")[1].trim()+"x";
 
-                    Episode episode = new Episode();
-                    episode.setTitle(titleList.get(index));
-                    episode.setDescription(descriptionList.get(index));
-                    episode.setEpisodeID(episodeIDList.get(index));
-                    episode.setImageEpisode(imageUrlList.get(index));
-                    episode.setStreamingURL(episodeURLEncodedlist.get(index));
+                List<Episode> episodeList = new ArrayList<Episode>();
+                for (String episodeID :episodeIDList) {
+                    //logger.info("episodeID --> "+episodeID);
+                    //logger.info("seasonNumber --> "+seasonNumber);
+                    if(episodeID.contains(seasonNumber)){
+                        //logger.info("am in season ... "+seasonNumber);
+                        //for (int i = 0; i < episodeIDList.size()-1 ; i++) {
+                        /**
+                            if(index == episodeIDList.size()
+                                    || index == episodeURLEncodedlist.size()
+                                    || index == descriptionList.size()){
+                                break;
+                            }
+                        **/
+                            Episode episode = new Episode();
+                            if(index < titleList.size()) {
+                                episode.setTitle(titleList.get(index));
+                            }
 
-                    index++;
+                            if(index < descriptionList.size()) {
+                                episode.setDescription(descriptionList.get(index));
+                            }
 
-                    logger.info("\n*******************************");
-                    logger.info("\n"+episode.toString());
-                    logger.info("\n*******************************\n");
+                            if(index < episodeIDList.size()) {
+                                episode.setEpisodeID(episodeIDList.get(index));
+                            }
 
-                    episodes.add(episode);
+                            if(index < imageUrlList.size()) {
+                                episode.setImageEpisode(imageUrlList.get(index));
+                            }
 
+                            if(index < episodeURLEncodedlist.size()) {
+                                episode.setStreamingURL(episodeURLEncodedlist.get(index));
+                            }
 
+                            index++;
+/**
+                            logger.info("\n*******************************");
+                            logger.info("\n"+episode.toString());
+                            logger.info("\n*******************************\n");
+**/
+                            episodeList.add(episode);
+                        //}
+                    }
                 }
-
-                season.setEpisodes(episodes);
+                season.setEpisodes(episodeList);
 
                 logger.info("SEASON: "+season.toString());
             }
 
+            serieTV.setSeasons(seasons);
 
 
-
-
-
-
-
-        }catch (Exception ex){
+        }catch (HttpStatusException ex){
+            logger.error("Status CODE: "+ex.getStatusCode());
+            ex.printStackTrace();
+            return null;
+        } catch (Exception ex){
             ex.printStackTrace();
             logger.error(ex.getMessage());
+            return null;
         }
+//****************
 
-        return null;
+//*************
+        return serieTV;
     }
 
+
+    /**
     public static void main(String[] args){
         ParsingProperties p = new ParsingProperties();
         p.init();
@@ -266,4 +324,5 @@ public class EngineSerie implements IEngine<SerieTV> {
 //        engineSerie.parseHTML("dexter", true);
 
     }
+     **/
 }

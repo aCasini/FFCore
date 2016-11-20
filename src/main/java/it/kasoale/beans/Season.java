@@ -7,9 +7,18 @@ import java.util.List;
  */
 public class Season {
 
-    private List<Episode> episodes;
     private String seasonID;
+    private String name;
     private String imageSeason;
+    private List<Episode> episodes;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getImageSeason() {
         return imageSeason;
@@ -38,6 +47,7 @@ public class Season {
     @Override
     public String toString() {
         return "Season ID: "+this.seasonID + "\n"
+                + "Naem: "+ this.name + "\n"
                 + "#Episodes: "+this.episodes.size();
     }
 }

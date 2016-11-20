@@ -1,6 +1,7 @@
 package it.kasoale.controllers;
 
 import it.kasoale.beans.SerieTV;
+import it.kasoale.ff.parsing.EngineWrapper;
 import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +23,8 @@ public class SeriesController {
     @RequestMapping(value = "/serie", method = RequestMethod.GET)
     public SerieTV getSerieTV(@RequestParam(value = "serieName", defaultValue = "") String serieName){
 
-        return null;
+        SerieTV serieTV = EngineWrapper.searchStreamingInfoSerie(serieName, true);
+
+        return serieTV;
     }
 }

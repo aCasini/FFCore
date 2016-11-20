@@ -7,9 +7,6 @@ import java.util.List;
  */
 public class SerieTV {
 
-    private String imageURL;
-    private List<Season> seasons;
-
     private String titoloOriginale;
     private String genere;
     private String nazione;
@@ -17,6 +14,11 @@ public class SerieTV {
     private String produzione;
     private String anno;
     private String cast;
+
+    private String imageURL;
+    private List<Season> seasons;
+
+
 
     public String getAnno() {
         return anno;
