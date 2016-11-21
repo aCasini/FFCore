@@ -144,11 +144,12 @@ public class EngineSerie extends AbstractEngine<SerieTV> {
 
 
 
-            ArrayList<String> titleList = new ArrayList<>();
-            ArrayList<String> descriptionList = new ArrayList<>();
-            ArrayList<String> episodeURLEncodedlist = new ArrayList<>();
-            ArrayList<String> episodeIDList = new ArrayList<>();
-            ArrayList<String> imageUrlList = new ArrayList<>();
+            ArrayList<String> titleList                 = new ArrayList<>();
+            ArrayList<String> descriptionList           = new ArrayList<>();
+            ArrayList<String> episodeURLEncodedlist     = new ArrayList<>();
+            ArrayList<String> preStreamingUrlList       = new ArrayList<>();
+            ArrayList<String> episodeIDList             = new ArrayList<>();
+            ArrayList<String> imageUrlList              = new ArrayList<>();
 
             //recupero le informazioni relative gli episodi della stagione
             for (Season season: seasons) {
@@ -172,6 +173,7 @@ public class EngineSerie extends AbstractEngine<SerieTV> {
                         //***** decode the URL
 
                         Document tempDoc = Jsoup.connect(episodeURLEncoded).userAgent(USER_AGENT).referrer(REFERER_URL).get();
+                        preStreamingUrlList.add(episodeURLEncoded);
                         int key = retrievalKey(tempDoc.html());
                         String encodedUrl = retrievalEncodedUrl(tempDoc.html());
 
@@ -277,6 +279,10 @@ public class EngineSerie extends AbstractEngine<SerieTV> {
 
                             if(index < episodeURLEncodedlist.size()) {
                                 episode.setStreamingURL(episodeURLEncodedlist.get(index));
+                            }
+
+                            if(index < preStreamingUrlList.size()){
+                                episode.setPreStreamingURL(preStreamingUrlList.get(index));
                             }
 
                             index++;

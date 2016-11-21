@@ -10,6 +10,7 @@ public class Episode {
     private String imageEpisode;
     private String description;
     private String streamingURL;
+    private String preStreamingURL;
 
     public String getDescription() {
         return description;
@@ -25,6 +26,10 @@ public class Episode {
 
     public String getStreamingURL() {
         return streamingURL;
+    }
+
+    public String getPreStreamingURL() {
+        return preStreamingURL;
     }
 
     public String getTitle() {
@@ -47,6 +52,10 @@ public class Episode {
         this.streamingURL = streamingURL;
     }
 
+    public void setPreStreamingURL(String preStreamingURL) {
+        this.preStreamingURL = preStreamingURL;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -57,6 +66,7 @@ public class Episode {
                 + "Espisode ID: "+ this.episodeID + "\n"
                 + "Description: "+ this.description +"\n"
                 + "Image: "+ this.imageEpisode + "\n"
-                + "Streaming URL: "+ this.streamingURL;
+                + "Streaming URL: "+ this.streamingURL + "\n"
+                + "Pre Streaming URL: " + this.preStreamingURL;
     }
 }
