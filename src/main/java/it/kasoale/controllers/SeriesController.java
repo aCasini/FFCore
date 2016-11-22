@@ -1,6 +1,9 @@
 package it.kasoale.controllers;
 
+import it.kasoale.beans.Episode;
+import it.kasoale.beans.Season;
 import it.kasoale.beans.SerieTV;
+import it.kasoale.database.dao.impl.JDBCSerieDAO;
 import it.kasoale.ff.parsing.EngineWrapper;
 import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.ws.rs.Produces;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by kasoale on 13/11/2016.
@@ -18,13 +23,42 @@ import java.util.List;
 public class SeriesController {
 
     private static Logger logger = Logger.getLogger(SeriesController.class);
+    private SerieTV serieTV;
 
     @Produces("application/json")
     @RequestMapping(value = "/serie", method = RequestMethod.GET)
     public SerieTV getSerieTV(@RequestParam(value = "serieName", defaultValue = "") String serieName){
 
-        SerieTV serieTV = EngineWrapper.searchStreamingInfoSerie(serieName, true);
+        JDBCSerieDAO dao = JDBCSerieDAO.getInstance();
+        serieTV = null;
+        if(dao.getSerieTV(serieName) != null){
+            //TODO: update the streaming URL for all episodes
+        }else{
+
+            serieTV = EngineWrapper.searchStreamingInfoSerie(serieName, true);
+
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(() -> {
+                String threadName = Thread.currentThread().getName();
+                dao.insertSerie(getSerieTV());
+                for (Season s : getSerieTV().getSeasons()) {
+                    dao.insertSeason(s, getSerieTV().getTitoloOriginale());
+                    dao.insertEpisode(s);
+                }
+
+                logger.info("Serie TV Stored Succesfully");
+            });
+
+        }
 
         return serieTV;
+    }
+
+    public SerieTV getSerieTV() {
+        return serieTV;
+    }
+
+    public void setSerieTV(SerieTV serieTV) {
+        this.serieTV = serieTV;
     }
 }

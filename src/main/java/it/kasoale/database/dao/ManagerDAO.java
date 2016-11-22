@@ -42,7 +42,9 @@ public class ManagerDAO {
                 String user = ConnectionProperties.getValue("jdbc.user.mysql");
                 String pass = ConnectionProperties.getValue("jdbc.pass.mysql");
 
-                connectionPool.setDriverClass("com.mysql.jdbc.Driver");
+                //connectionPool.setDriverClass("com.mysql.jdbc.Driver");
+                connectionPool.setDriverClass("com.mysql.cj.jdbc.Driver");
+
                 connectionPool.setJdbcUrl("jdbc:mysql://"+host + ":" + port);
                 connectionPool.setUser(user);
                 connectionPool.setPassword(pass);

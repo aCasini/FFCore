@@ -11,8 +11,8 @@ import java.util.List;
  */
 public interface SerieDAO {
 
-    public void insertEpisode(Episode episode);
-    public void insertSeason(Season season);
+    public void insertEpisode(Season season);
+    public void insertSeason(Season season, String serieTitle);
     public void insertSerie(SerieTV serieTV);
 
     public void updateEpisodeStreamingURL(Episode episode);
