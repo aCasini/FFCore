@@ -178,6 +178,7 @@ public class JDBCSerieDAO implements SerieDAO{
         SELECT_EPISODES = SELECT_EPISODES.replace("?1", serieName);
         SELECT_EPISODES = SELECT_EPISODES.replace("?2", seasonNumber);
 
+        logger.info(SELECT_EPISODES);
         Connection connection = null;
         List<Episode> episodeList = new ArrayList<>();
 
@@ -238,6 +239,8 @@ public class JDBCSerieDAO implements SerieDAO{
         logger.info(" *** Start getSeasons ");
         String SELECT_SEASONS = StatementsProperties.getValue("select.seasons");
         SELECT_SEASONS = SELECT_SEASONS.replace("?", serieName);
+
+        logger.info(SELECT_SEASONS);
 
         Connection connection = null;
         List<Season> seasonList = new ArrayList<>();
