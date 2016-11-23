@@ -30,9 +30,17 @@ public class SeriesController {
     public SerieTV getSerieTV(@RequestParam(value = "serieName", defaultValue = "") String serieName){
 
         JDBCSerieDAO dao = JDBCSerieDAO.getInstance();
-        serieTV = null;
-        if(dao.getSerieTV(serieName) != null){
-            //TODO: update the streaming URL for all episodes
+        serieTV = dao.getSerieTV(serieName);
+        if( serieTV != null){
+            List<Season> seasons = dao.getSeasons(serieTV.getTitoloOriginale());
+            serieTV.setSeasons(seasons);
+
+            if(seasons.size() > 0){
+                for (Season s : serieTV.getSeasons() ) {
+                    List<Episode> episodeList = dao.getEpisodes(serieTV.getTitoloOriginale(), s.getSeasonID());
+                    s.setEpisodes(episodeList);
+                }
+            }
         }else{
 
             serieTV = EngineWrapper.searchStreamingInfoSerie(serieName, true);
@@ -43,7 +51,7 @@ public class SeriesController {
                 dao.insertSerie(getSerieTV());
                 for (Season s : getSerieTV().getSeasons()) {
                     dao.insertSeason(s, getSerieTV().getTitoloOriginale());
-                    dao.insertEpisode(s);
+                    dao.insertEpisode(s, getSerieTV().getTitoloOriginale());
                 }
 
                 logger.info("Serie TV Stored Succesfully");
