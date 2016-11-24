@@ -202,7 +202,7 @@ public class JDBCSerieDAO implements SerieDAO{
                 String encodedUrl = JSUtils.retrievalEncodedUrl(tempDoc.html());
 
                 if(encodedUrl != null){
-                    episode.setStreamingURL(encodedUrl);
+                    episode.setStreamingURL(JSInvocable.decriptURLVideo(encodedUrl, key));
                 }
 
 

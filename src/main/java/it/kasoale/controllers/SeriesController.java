@@ -32,6 +32,7 @@ public class SeriesController {
         JDBCSerieDAO dao = JDBCSerieDAO.getInstance();
         serieTV = dao.getSerieTV(serieName);
         if( serieTV != null){
+            logger.info("Serie TV already present");
             List<Season> seasons = dao.getSeasons(serieTV.getTitoloOriginale());
             serieTV.setSeasons(seasons);
 
@@ -42,7 +43,7 @@ public class SeriesController {
                 }
             }
         }else{
-
+            logger.info("Serie TV NOT present yet");
             serieTV = EngineWrapper.searchStreamingInfoSerie(serieName, true);
 
             ExecutorService executor = Executors.newSingleThreadExecutor();

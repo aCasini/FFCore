@@ -28,8 +28,8 @@ public class JSInvocable {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("JavaScript");
 
-        logger.info("Film Url Encoded: "+filmUrlEncoded);
-        logger.info("Key: "+key);
+        //logger.info("Film Url Encoded: "+filmUrlEncoded);
+        //logger.info("Key: "+key);
 
         try {
 
@@ -39,7 +39,7 @@ public class JSInvocable {
             Object filmDecoded = invocable.invokeFunction("base64_decode", filmUrlEncoded, key);
             //Object obj = invocable.invokeFunction("base64_decode", "aHR0cDovLzE2My4xNzIhdbfbhigeeuMjA5LjE5Ojg3ODcvcnhsNml0amRzaHh5ZnR4eHltY25hZ2lmanI1dHlnZHF0dnc2ZGZyNzd4ZHR1b2s3MmJnZTNod2lxZnlxL3YuZmx2", 19);
 
-            logger.info("URL Decoded: "+filmDecoded.toString());
+            //logger.info("URL Decoded: "+filmDecoded.toString());
             System.out.println(filmDecoded.toString());
 
             return filmDecoded.toString();
