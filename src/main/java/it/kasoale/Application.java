@@ -1,5 +1,6 @@
 package it.kasoale;
 
+import it.kasoale.utils.ApiProperties;
 import it.kasoale.utils.ConnectionProperties;
 import it.kasoale.utils.ParsingProperties;
 import it.kasoale.utils.StatementsProperties;
@@ -22,5 +23,8 @@ public class Application {
 
         ParsingProperties parsingProperties = new ParsingProperties();
         parsingProperties.init();
+
+        ApiProperties apiProperties = new ApiProperties();
+        apiProperties.init();
     }
 }
