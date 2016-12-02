@@ -13,6 +13,8 @@ public class Film {
     private String filmUrl;
     private String streamingUrl;
 
+    //private FilmDetails filmDetails;
+
 
     public Film(){
         super();
@@ -24,8 +26,15 @@ public class Film {
         this.filmUrl = filmUrl;
         this.streamingUrl = streamingUrl;
     }
+/*
+    public FilmDetails getFilmDetails() {
+        return filmDetails;
+    }
 
-
+    public void setFilmDetails(FilmDetails filmDetails) {
+        this.filmDetails = filmDetails;
+    }
+*/
     public String getFilmName() {
         return filmName;
     }
